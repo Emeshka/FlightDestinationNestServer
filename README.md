@@ -1,73 +1,51 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+## FlightDestination - website about travelling
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Realization of the same model as in FlightDirection repository, but with different stack. In this repository only the back-end is located.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+![Screenshot_2](https://user-images.githubusercontent.com/65328222/158217782-19cf3c9d-215e-41e4-8e1a-95d5eac9455e.png)
 
-## Description
+API:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Get summary list of countries in given language. Language affects the title and textSnippet fields. If a country doesn't have an article in the provided language, the country will still be in the list, but title will be equal to the nameTransliterated and the textSnippet will be empty. It will be used to ask user if he wants to see an article in a different language anyway
 
-## Installation
+    {/country/:lang, GET}
 
-```bash
-$ npm install
-```
+Create a country. It's created with an original name only, other fields should be edited through further PUT requests.
 
-## Running the app
+    {/country, POST}
+    Content-Type: application/json
+    Required body params: "name_original": string
 
-```bash
-# development
-$ npm run start
+Get summary list of towns in given language. Language affects the title and textSnippet fields. If a town doesn't have an article in the provided language, the town will still be in the list, but title will be equal to the nameTransliterated and the textSnippet will be empty. It will be used to ask user if he wants to see an article in a different language anyway.
 
-# watch mode
-$ npm run start:dev
+    {/town/:lang, GET}
 
-# production mode
-$ npm run start:prod
-```
+Create a town. It's created with an original name only, other fields should be edited through further PUT requests. By the original name the name in the native language and script is meant, it will then be transliterated and used in React Routing to make more informative URLs (Αθήνα => athena, 北京 => bei-jing).
 
-## Test
+    {/town, POST}
+    Content-Type: application/json
+    Required body params: "name_original": string
 
-```bash
-# unit tests
-$ npm run test
+Get the article with given language and destination id. Returns an object, if nothing is found - fields of the object are null
 
-# e2e tests
-$ npm run test:e2e
+    {/article/:lang/:destination_id, GET}
 
-# test coverage
-$ npm run test:cov
-```
+Get a file by id. Returns Base64 string
 
-## Support
+    {/file/:id, GET}
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Upload a file as a byte array
 
-## Stay in touch
+    {/file, POST}
+    Content-Type: multipart/form-data
+    Required body params:
+    file: Buffer
+    name: string
+    destination_id: integer
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Stack:
 
-## License
-
-Nest is [MIT licensed](LICENSE).
+- Node.js
+- Nest.js, TypeScript
+- Prisma - ORM/query construction
+- PostgreSQL
