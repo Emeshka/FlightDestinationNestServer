@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id             Int           @id @default(autoincrement())
+  language       String?       @db.VarChar(255)
+  text           String?       @db.VarChar(255)
+  title          String?       @db.VarChar(255)
+  destination_id Int?
+  belongsTo      Destination?  @relation(fields: [destination_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fktqd5as3kfoyea4af24se8hwgh")
+
+  @@map("articles")
+}
+
+model Country {
+  money           String?      @db.VarChar(255)
+  id              Int          @id
+  capital_id      Int?
+  flag_id         String?      @db.VarChar(255)
+  capital         Town?        @relation("countries_capital_idTotowns", fields: [capital_id], references: [id], map: "fknj59eij3rjtrrt4flxsca26fn")
+  flag            FileBlob?    @relation(fields: [flag_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkphg9244nt0y2qmepv8ictrk0a")
+  destination     Destination  @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkalwmtnr7ged1vxt3uf9xw16d0")
+  towns           Town[]       @relation("countriesTotowns_country_id")
+  
+  @@map("countries")
+}
+
+model Destination {
+  id                  Int        @id @default(autoincrement())
+  name_transliterated String?    @db.VarChar(255)
+  articles            Article[]
+  country             Country?
+  files               FileBlob[]
+  town                Town?
+  
+  @@map("destinations")
+}
+
+model FileBlob {
+  id             String        @id @db.VarChar(255) @default(uuid())
+  data           Bytes?
+  name           String?       @db.VarChar(255)
+  type           String?       @db.VarChar(255)
+  destination_id Int 
+  belongsTo      Destination   @relation(fields: [destination_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fke6w8biky021uooedljek472ah")
+  flagOf         Country?
+
+  @@map("files")
+}
+
+model Town {
+  id                    Int         @id
+  country_id            Int?
+  belongsToCountry      Country?    @relation("countriesTotowns_country_id", fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkpixcrhbw3rwrw0yp2yl4dbr74")
+  destination           Destination @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk3lu61rjg0sjnpfccv5eps95fb")
+  capitalOf             Country?    @relation("countries_capital_idTotowns")
+  
+  @@map("towns")
+}
