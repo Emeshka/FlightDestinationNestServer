@@ -21,7 +21,11 @@ export class TownService {
         });
         for (const town of queryResult) {
             let dest = town.destination
-            dest.languagesAvailable = await this.articleService.getAvailableLanguagesForDestination(dest)
+            await this.destinationService.setUpDestinationResponse(dest)
+            let destCountry = town.belongsToCountry.destination
+            await this.destinationService.setUpDestinationResponse(destCountry)
+            town.isCapital = !!town.capitalOf
+            delete town.capitalOf
         };
         return queryResult;
     }
@@ -35,5 +39,30 @@ export class TownService {
                 destination: true
             }
         })
+    }
+
+    async setCountry(townId: number, countryId: number): Promise<string> {
+        let message = "OK"
+        try {
+            await this.prisma.town.update({
+                where: {
+                    id: townId
+                },
+                data: {
+                    belongsToCountry: {
+                        connect: {
+                            id: countryId
+                        }
+                    }
+                }
+            })
+        } catch (e) {
+            if (e.code = "P2025") {
+                message = "Some of provided destinations don't exist: country id: " + countryId + ", town id: " + townId
+            } else {
+                message = "Failure"
+            }
+        }
+        return message
     }
 }

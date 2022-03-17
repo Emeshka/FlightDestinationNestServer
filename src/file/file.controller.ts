@@ -1,8 +1,6 @@
-import { Controller, Post, Get, UseInterceptors, UploadedFile, Body, Param, Req, Request, Headers as HeadersNest } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Get, Param } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FileBlob } from '@prisma/client';
-import { Express } from 'express';
 
 @Controller('file')
 export class FileController {
@@ -24,18 +22,5 @@ export class FileController {
             data: file.data.toString('base64')
         }
         return response
-    }
-
-    @Post()
-    @UseInterceptors(FileInterceptor('file'))
-    async upload(
-        @UploadedFile() file: Express.Multer.File,
-        @Body() queryBody: any,
-        @Req() req: Request
-    ): Promise<string> {
-        const headers: any = req.headers
-        const fileBlobId: string = await this.fileService.createFile(file, queryBody.name, Number(queryBody.destination_id));
-        const fileURL: string = headers.host + '/' + req.url + '/' + fileBlobId
-        return fileURL
     }
 }
