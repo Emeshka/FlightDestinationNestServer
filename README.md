@@ -36,12 +36,26 @@ Get a file by id. Returns Base64 string
 
 Upload a file as a byte array
 
-    {/file, POST}
+    {/destination/file/:destination_id, POST}
     Content-Type: multipart/form-data
     Required body params:
     file: Buffer
     name: string
-    destination_id: integer
+
+Put an article to a destination in a language.
+
+    {/destination/article/:lang/:destination_id, PUT}
+    Content-Type: multipart/form-data
+    Required body params:
+    file: Buffer
+    name: string
+
+Put a flag of country
+
+    {/country/flag/:destination_id, PUT}
+    Content-Type: multipart/form-data
+    Required body params:
+    file: Buffer
 
 Stack:
 
